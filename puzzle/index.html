@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Un amor, una historia que se construye para siempre</title>
+    <style>
+        /* ========== ESTILOS GENERALES ========== */
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #FFD1DC;
+            margin: 0;
+            padding: 20px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ctext x='10' y='30' font-family='Arial' font-size='20' fill='%23FF69B4'%3E?%3C/text%3E%3Ctext x='40' y='60' font-family='Arial' font-size='20' fill='%23FF69B4'%3E?%3C/text%3E%3Ctext x='70' y='90' font-family='Arial' font-size='20' fill='%23FF69B4'%3E?%3C/text%3E%3C/svg%3E");
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .title-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #FF69B4;
+            margin: 0 0 10px 0;
+        }
+        
+        h2 {
+            color: #FF8DC7;
+            margin: 0;
+        }
+        
+        .button {
+            display: block;
+            background: linear-gradient(to right, #FF8DC7, #FF69B4);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 30px;
+            font-size: 18px;
+            margin: 20px auto;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .button:hover {
+            transform: scale(1.05);
+        }
+
+        /* ========== ESTILOS PÁGINA DE SELECCIÓN ========== */
+        .image-slider {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 10px 0;
+            scroll-behavior: smooth;
+        }
+        
+        .image-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: blur(5px);
+        }
+        
+        .image-container.completed img {
+            filter: none;
+        }
+        
+        .lock-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+        }
+        
+        .completed .lock-icon {
+            display: none;
+        }
+
+        /* ========== ESTILOS PÁGINA DE PUZZLE ========== */
+        .puzzle-page {
+            display: none;
+        }
+        
+        .puzzle-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 5px;
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+        }
+        
+        .puzzle-target {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 2px;
+            width: 304px;
+            height: 304px;
+            margin: 30px auto;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            padding: 5px;
+        }
+        
+        .target-cell {
+            width: 72px;
+            height: 72px;
+            border: 1px dashed #aaa;
+            background-color: #fff;
+        }
+        
+        .puzzle-piece {
+            width: 72px;
+            height: 72px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            background-size: 300px 300px;
+            background-repeat: no-repeat;
+        }
+        
+        .pieces-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 20px auto;
+            width: 320px;
+            justify-content: center;
+        }
+        
+        .success-message {
+            display: none;
+            text-align: center;
+            font-size: 24px;
+            color: #FF69B4;
+            margin: 20px 0;
+            animation: pulse 1s infinite;
+        }
+        
+        /* ========== ESTILOS DE ANIMACIONES ========== */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            border-radius: 50%;
+            animation: fall 3s ease-in infinite;
+            z-index: 1000;
+        }
+        
+        @keyframes fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        .heart {
+            position: fixed;
+            font-size: 20px;
+            animation: float 3s ease-in infinite;
+            z-index: 1000;
+            color: #FF69B4;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); opacity: 1; }
+            100% { transform: translateY(-100px) translateX(20px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Página de Selección de Imágenes -->
+    <div class="container" id="selection-page">
+        <div class="title-box">
+            <h1>Un amor, una historia que se construye para siempre</h1>
+            <h2>Escoge una fotito para un puzzle</h2>
+        </div>
+        
+        <div class="image-slider" id="image-slider">
+            <!-- IMÁGENES PARA EL ROMPECABEZAS - URLS ACTUALIZADAS -->
+            <div class="image-container" data-id="1">
+                <img src="f1.jpeg" alt="Imagen 1">
+                <div class="lock-icon">?</div>
+            </div>
+            <div class="image-container" data-id="2">
+                <img src="f2.jpeg" alt="Imagen 2">
+                <div class="lock-icon">?</div>
+            </div>
+            <div class="image-container" data-id="3">
+                <img src="f3.jpeg" alt="Imagen 3">
+                <div class="lock-icon">?</div>
+            </div>
+            <div class="image-container" data-id="4">
+                <img src="f4.jpeg" alt="Imagen 4">
+                <div class="lock-icon">?</div>
+            </div>
+            <div class="image-container" data-id="5">
+                <img src="f5.jpeg" alt="Imagen 5">
+                <div class="lock-icon">?</div>
+            </div>
+            <div class="image-container" data-id="6">
+                <img src="f6.jpeg" alt="Imagen 6">
+                <div class="lock-icon">?</div>
+            </div>
+            <div class="image-container" data-id="7">
+                <img src="f7.jpeg" alt="Imagen 7">
+                <div class="lock-icon">?</div>
+            </div>
+            <div class="image-container" data-id="8">
+                <img src="f8.jpeg" alt="Imagen 8">
+                <div class="lock-icon">?</div>
+            </div>
+            <div class="image-container" data-id="9">
+                <img src="f9.jpeg" alt="Imagen 9">
+                <div class="lock-icon">?</div>
+            </div>
+            <div class="image-container" data-id="10">
+                <img src="f10.jpeg" alt="Imagen 10">
+                <div class="lock-icon">?</div>
+            </div>
+            <div class="image-container" data-id="11">
+                <img src="https://photos.app.goo.gl/a21hSnkMfmCxnik49" alt="Imagen 11">
+                <div class="lock-icon">?</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Página del Rompecabezas -->
+    <div class="container puzzle-page" id="puzzle-page">
+        <div class="title-box">
+            <h1>Arma el rompecabezas pollita</h1>
+        </div>
+        
+        <div class="puzzle-target" id="puzzle-target">
+            <!-- Las celdas objetivo se generarán dinámicamente -->
+        </div>
+        
+        <div class="pieces-container" id="pieces-container">
+            <!-- Las piezas del puzzle se generarán dinámicamente -->
+        </div>
+        
+        <div class="success-message" id="success-message">
+            ¡Lo armaste mi niña! ?
+        </div>
+        
+        <button class="button" id="back-button">Volver</button>
+        <button class="button" id="continue-button" style="display:none;">Seguir</button>
+    </div>
+
+    <script>
+        // ========== VARIABLES GLOBALES ==========
+        let currentImage = null;
+        let completedPuzzles = [];
+        let puzzlePieces = [];
+        let targetGrid = [];
+        let correctPlacements = 0;
+        let pieceMapping = [];  // Para mapear las piezas desordenadas
+        
+        // ========== INICIALIZACIÓN ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePuzzleTarget();
+            setupImageSelection();
+            setupButtons();
+        });
+        
+        // ========== FUNCIONES DE INICIALIZACIÓN ==========
+        function initializePuzzleTarget() {
+            // Preparar celdas objetivo del puzzle
+            const puzzleTarget = document.getElementById('puzzle-target');
+            for (let i = 0; i < 16; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'target-cell';
+                cell.dataset.position = i;
+                puzzleTarget.appendChild(cell);
+                targetGrid.push(cell);
+                
+                // Permitir soltar piezas en las celdas
+                setupDropTarget(cell);
+            }
+        }
+        
+        function setupImageSelection() {
+            // Configurar eventos para imágenes seleccionables
+            const imageContainers = document.querySelectorAll('.image-container');
+            imageContainers.forEach(container => {
+                container.addEventListener('click', function() {
+                    const imageId = this.dataset.id;
+                    currentImage = imageId;
+                    showPuzzlePage(imageId);
+                });
+            });
+        }
+        
+        function setupButtons() {
+            // Botón para volver a la selección
+            document.getElementById('back-button').addEventListener('click', function() {
+                document.getElementById('puzzle-page').style.display = 'none';
+                document.getElementById('selection-page').style.display = 'block';
+            });
+            
+            // Botón para continuar después de completar
+            document.getElementById('continue-button').addEventListener('click', function() {
+                completePuzzle();
+                
+                // Volver a la página de selección
+                document.getElementById('puzzle-page').style.display = 'none';
+                document.getElementById('selection-page').style.display = 'block';
+            });
+        }
+        
+        // ========== FUNCIONES DE MANEJO DE PUZZLE ==========
+        function setupDropTarget(cell) {
+            cell.addEventListener('dragover', function(e) {
+                e.preventDefault();
+            });
+            
+            cell.addEventListener('drop', function(e) {
+                e.preventDefault();
+                const pieceId = e.dataTransfer.getData('text');
+                const piece = document.getElementById(pieceId);
+                
+                // Si la celda ya tiene una pieza, no permitir soltar
+                if (this.children.length > 0) return;
+                
+                // Mover la pieza a la celda
+                this.appendChild(piece);
+                
+                // Verificar si la pieza está en la posición correcta
+                checkPiecePlacement(piece, this);
+            });
+        }
+        
+        function checkPiecePlacement(piece, cell) {
+            // Verificar si la pieza visual corresponde a la posición de la celda
+            const visualPosition = piece.dataset.visualPosition;
+            if (visualPosition === cell.dataset.position) {
+                correctPlacements++;
+                showConfetti();
+                
+                // Si todas las piezas están en su lugar
+                if (correctPlacements === 16) {
+                    setTimeout(() => {
+                        showCompletionMessage();
+                    }, 500);
+                }
+            }
+        }
+        
+        function showCompletionMessage() {
+            document.getElementById('success-message').style.display = 'block';
+            document.getElementById('continue-button').style.display = 'block';
+            document.getElementById('back-button').style.display = 'none';
+            showHearts();
+            showConfettiExplosion();
+        }
+        
+        function completePuzzle() {
+            // Marcar el puzzle como completado
+            if (!completedPuzzles.includes(currentImage)) {
+                completedPuzzles.push(currentImage);
+                
+                // Actualizar la vista de selección
+                const completedContainer = document.querySelector(`.image-container[data-id="${currentImage}"]`);
+                completedContainer.classList.add('completed');
+            }
+        }
+        
+        // ========== FUNCIÓN PARA MOSTRAR PÁGINA DE PUZZLE ==========
+        function showPuzzlePage(imageId) {
+            document.getElementById('selection-page').style.display = 'none';
+            document.getElementById('puzzle-page').style.display = 'block';
+            document.getElementById('success-message').style.display = 'none';
+            document.getElementById('continue-button').style.display = 'none';
+            document.getElementById('back-button').style.display = 'block';
+            
+            // Restablecer estado
+            correctPlacements = 0;
+            
+            // Limpiar contenedores
+            resetPuzzleContainers();
+            
+            // Crear las piezas del puzzle
+            createPuzzlePieces(imageId);
+        }
+        
+        function resetPuzzleContainers() {
+            const piecesContainer = document.getElementById('pieces-container');
+            piecesContainer.innerHTML = '';
+            
+            targetGrid.forEach(cell => {
+                while (cell.firstChild) {
+                    cell.removeChild(cell.firstChild);
+                }
+            });
+        }
+        
+        function createPuzzlePieces(imageId) {
+            puzzlePieces = [];
+            const imageUrl = document.querySelector(`.image-container[data-id="${imageId}"] img`).src;
+            
+            // Crear un arreglo con las posiciones originales
+            let originalPositions = Array.from({length: 16}, (_, i) => i);
+            
+            // Crear un mapeo aleatorio de posiciones visuales
+            pieceMapping = [...originalPositions];
+            shuffleArray(pieceMapping);
+            
+            // Crear otro arreglo para el orden de las piezas en pantalla
+            let displayOrder = [...originalPositions];
+            shuffleArray(displayOrder);
+            
+            const piecesContainer = document.getElementById('pieces-container');
+            
+            for (let i = 0; i < 16; i++) {
+                const displayPosition = displayOrder[i];
+                const visualPosition = pieceMapping[displayPosition];
+                
+                const piece = document.createElement('div');
+                piece.className = 'puzzle-piece';
+                piece.id = `piece-${displayPosition}`;
+                piece.dataset.position = displayPosition.toString(); // Para identificación
+                piece.dataset.visualPosition = visualPosition.toString(); // La posición visual correcta
+                
+                // Calcular la posición de la imagen para esta pieza
+                const row = Math.floor(visualPosition / 4);
+                const col = visualPosition % 4;
+                piece.style.backgroundPosition = `-${col * 72}px -${row * 72}px`;
+                piece.style.backgroundImage = `url(${imageUrl})`;
+                
+                // Hacer la pieza arrastrable
+                piece.draggable = true;
+                piece.addEventListener('dragstart', function(e) {
+                    e.dataTransfer.setData('text', this.id);
+                });
+                
+                piecesContainer.appendChild(piece);
+                puzzlePieces.push(piece);
+            }
+        }
+        
+        // ========== FUNCIONES DE UTILIDAD ==========
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        function getRandomColor() {
+            const colors = ['#FF69B4', '#FFB6C1', '#FFC0CB', '#FF8DC7', '#FF1493', '#DB7093'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        // ========== FUNCIONES DE EFECTOS VISUALES ==========
+        function showConfetti() {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = `${Math.random() * 100}%`;
+            confetti.style.backgroundColor = getRandomColor();
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => {
+                document.body.removeChild(confetti);
+            }, 3000);
+        }
+        
+        function showConfettiExplosion() {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    showConfetti();
+                }, i * 50);
+            }
+        }
+        
+        function showHearts() {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.innerHTML = '?';
+                    heart.style.left = `${Math.random() * 80 + 10}%`;
+                    heart.style.bottom = '20%';
+                    document.body.appendChild(heart);
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(heart);
+                    }, 3000);
+                }, i * 150);
+            }
+        }
+    </script>
+</body>
+</html>
