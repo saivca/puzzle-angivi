@@ -55,7 +55,7 @@
             transform: scale(1.05);
         }
 
-        /* ========== ESTILOS P¡GINA DE SELECCI”N ========== */
+        /* ========== ESTILOS P√ÅGINA DE SELECCI√ìN ========== */
         .image-slider {
             display: flex;
             overflow-x: auto;
@@ -96,7 +96,7 @@
             display: none;
         }
 
-        /* ========== ESTILOS P¡GINA DE PUZZLE ========== */
+        /* ========== ESTILOS P√ÅGINA DE PUZZLE ========== */
         .puzzle-page {
             display: none;
         }
@@ -193,7 +193,7 @@
     </style>
 </head>
 <body>
-    <!-- P·gina de SelecciÛn de Im·genes -->
+    <!-- P√°gina de Selecci√≥n de Im√°genes -->
     <div class="container" id="selection-page">
         <div class="title-box">
             <h1>Un amor, una historia que se construye para siempre</h1>
@@ -201,7 +201,7 @@
         </div>
         
         <div class="image-slider" id="image-slider">
-            <!-- IM¡GENES PARA EL ROMPECABEZAS - URLS ACTUALIZADAS -->
+            <!-- IM√ÅGENES PARA EL ROMPECABEZAS - URLS ACTUALIZADAS -->
             <div class="image-container" data-id="1">
                 <img src="f1.jpeg" alt="Imagen 1">
                 <div class="lock-icon">?</div>
@@ -242,29 +242,25 @@
                 <img src="f10.jpeg" alt="Imagen 10">
                 <div class="lock-icon">?</div>
             </div>
-            <div class="image-container" data-id="11">
-                <img src="https://photos.app.goo.gl/a21hSnkMfmCxnik49" alt="Imagen 11">
-                <div class="lock-icon">?</div>
-            </div>
         </div>
     </div>
     
-    <!-- P·gina del Rompecabezas -->
+    <!-- P√°gina del Rompecabezas -->
     <div class="container puzzle-page" id="puzzle-page">
         <div class="title-box">
             <h1>Arma el rompecabezas pollita</h1>
         </div>
         
         <div class="puzzle-target" id="puzzle-target">
-            <!-- Las celdas objetivo se generar·n din·micamente -->
+            <!-- Las celdas objetivo se generar√°n din√°micamente -->
         </div>
         
         <div class="pieces-container" id="pieces-container">
-            <!-- Las piezas del puzzle se generar·n din·micamente -->
+            <!-- Las piezas del puzzle se generar√°n din√°micamente -->
         </div>
         
         <div class="success-message" id="success-message">
-            °Lo armaste mi niÒa! ?
+            ¬°Lo armaste mi ni√±a! ?
         </div>
         
         <button class="button" id="back-button">Volver</button>
@@ -280,14 +276,14 @@
         let correctPlacements = 0;
         let pieceMapping = [];  // Para mapear las piezas desordenadas
         
-        // ========== INICIALIZACI”N ==========
+        // ========== INICIALIZACI√ìN ==========
         document.addEventListener('DOMContentLoaded', function() {
             initializePuzzleTarget();
             setupImageSelection();
             setupButtons();
         });
         
-        // ========== FUNCIONES DE INICIALIZACI”N ==========
+        // ========== FUNCIONES DE INICIALIZACI√ìN ==========
         function initializePuzzleTarget() {
             // Preparar celdas objetivo del puzzle
             const puzzleTarget = document.getElementById('puzzle-target');
@@ -304,7 +300,7 @@
         }
         
         function setupImageSelection() {
-            // Configurar eventos para im·genes seleccionables
+            // Configurar eventos para im√°genes seleccionables
             const imageContainers = document.querySelectorAll('.image-container');
             imageContainers.forEach(container => {
                 container.addEventListener('click', function() {
@@ -316,17 +312,17 @@
         }
         
         function setupButtons() {
-            // BotÛn para volver a la selecciÛn
+            // Bot√≥n para volver a la selecci√≥n
             document.getElementById('back-button').addEventListener('click', function() {
                 document.getElementById('puzzle-page').style.display = 'none';
                 document.getElementById('selection-page').style.display = 'block';
             });
             
-            // BotÛn para continuar despuÈs de completar
+            // Bot√≥n para continuar despu√©s de completar
             document.getElementById('continue-button').addEventListener('click', function() {
                 completePuzzle();
                 
-                // Volver a la p·gina de selecciÛn
+                // Volver a la p√°gina de selecci√≥n
                 document.getElementById('puzzle-page').style.display = 'none';
                 document.getElementById('selection-page').style.display = 'block';
             });
@@ -349,19 +345,19 @@
                 // Mover la pieza a la celda
                 this.appendChild(piece);
                 
-                // Verificar si la pieza est· en la posiciÛn correcta
+                // Verificar si la pieza est√° en la posici√≥n correcta
                 checkPiecePlacement(piece, this);
             });
         }
         
         function checkPiecePlacement(piece, cell) {
-            // Verificar si la pieza visual corresponde a la posiciÛn de la celda
+            // Verificar si la pieza visual corresponde a la posici√≥n de la celda
             const visualPosition = piece.dataset.visualPosition;
             if (visualPosition === cell.dataset.position) {
                 correctPlacements++;
                 showConfetti();
                 
-                // Si todas las piezas est·n en su lugar
+                // Si todas las piezas est√°n en su lugar
                 if (correctPlacements === 16) {
                     setTimeout(() => {
                         showCompletionMessage();
@@ -383,13 +379,13 @@
             if (!completedPuzzles.includes(currentImage)) {
                 completedPuzzles.push(currentImage);
                 
-                // Actualizar la vista de selecciÛn
+                // Actualizar la vista de selecci√≥n
                 const completedContainer = document.querySelector(`.image-container[data-id="${currentImage}"]`);
                 completedContainer.classList.add('completed');
             }
         }
         
-        // ========== FUNCI”N PARA MOSTRAR P¡GINA DE PUZZLE ==========
+        // ========== FUNCI√ìN PARA MOSTRAR P√ÅGINA DE PUZZLE ==========
         function showPuzzlePage(imageId) {
             document.getElementById('selection-page').style.display = 'none';
             document.getElementById('puzzle-page').style.display = 'block';
@@ -442,10 +438,10 @@
                 const piece = document.createElement('div');
                 piece.className = 'puzzle-piece';
                 piece.id = `piece-${displayPosition}`;
-                piece.dataset.position = displayPosition.toString(); // Para identificaciÛn
-                piece.dataset.visualPosition = visualPosition.toString(); // La posiciÛn visual correcta
+                piece.dataset.position = displayPosition.toString(); // Para identificaci√≥n
+                piece.dataset.visualPosition = visualPosition.toString(); // La posici√≥n visual correcta
                 
-                // Calcular la posiciÛn de la imagen para esta pieza
+                // Calcular la posici√≥n de la imagen para esta pieza
                 const row = Math.floor(visualPosition / 4);
                 const col = visualPosition % 4;
                 piece.style.backgroundPosition = `-${col * 72}px -${row * 72}px`;
